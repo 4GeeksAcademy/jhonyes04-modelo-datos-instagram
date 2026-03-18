@@ -1,7 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import String, ForeignKey, Enum, Text
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.sql import func
+from sqlalchemy.orm import Mapped, mapped_column
 import enum
 
 db = SQLAlchemy()
@@ -30,9 +29,6 @@ class User(db.Model):
     last_name: Mapped[str] = mapped_column(String(100), nullable=True)
     email: Mapped[str] = mapped_column(
         String(120), unique=True, nullable=False)
-
-    posts: Mapped[list['Post']] = relationship(back_populates="author")
-    comments: Mapped[list['Comment']] = relationship(back_populates="author")
 
     def serialize(self):
         return {
@@ -66,10 +62,6 @@ class Post(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
 
-    author: Mapped["User"] = relationship(back_populates="posts")
-    media: Mapped[list['Media']] = relationship(back_populates="post")
-    comments: Mapped[list['Comment']] = relationship(back_populates='post')
-
     def serialize(self):
         return {
             "id": self.id,
@@ -93,8 +85,6 @@ class Media(db.Model):
     url: Mapped[str] = mapped_column(String(255), nullable=False)
     post_id: Mapped[int] = mapped_column(ForeignKey('post.id'))
 
-    post: Mapped["Post"] = relationship(back_populates="media")
-
     def serialize(self):
         return {
             "id": self.id,
@@ -111,9 +101,6 @@ class Comment(db.Model):
     comment_text: Mapped[str] = mapped_column(Text, nullable=False)
     author_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
     post_id: Mapped[int] = mapped_column(ForeignKey('post.id'))
-
-    author: Mapped["User"] = relationship(back_populates='comments')
-    post: Mapped["Post"] = relationship(back_populates='comments')
 
     def serialize(self):
         return {
