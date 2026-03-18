@@ -20,8 +20,6 @@ db = SQLAlchemy()
 #         }
 
 class User(db.Model):
-    __tablename__ = 'user'
-
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(
         String(20), unique=True, nullable=False)
@@ -37,13 +35,10 @@ class User(db.Model):
             "first_name": self.first_name,
             "last_name": self.last_name,
             "email": self.email,
-            "post_count": len(self.posts)
         }
 
 
 class Follower(db.Model):
-    __tablename__ = 'follower'
-
     user_from_id: Mapped[int] = mapped_column(
         ForeignKey('user.id'), primary_key=True)
     user_to_id: Mapped[int] = mapped_column(
@@ -57,8 +52,6 @@ class Follower(db.Model):
 
 
 class Post(db.Model):
-    __tablename__ = 'post'
-
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
 
@@ -66,7 +59,6 @@ class Post(db.Model):
         return {
             "id": self.id,
             "user_id": self.user_id,
-            "media": [m.serialize() for m in self.media]
         }
 
 
@@ -77,8 +69,6 @@ class MediaType(enum.Enum):
 
 
 class Media(db.Model):
-    __tablename__ = 'media'
-
     id: Mapped[int] = mapped_column(primary_key=True)
     type: Mapped[MediaType] = mapped_column(
         Enum(MediaType), nullable=False, default=MediaType.IMAGE)
@@ -95,8 +85,6 @@ class Media(db.Model):
 
 
 class Comment(db.Model):
-    __tablename__ = 'comment'
-
     id: Mapped[int] = mapped_column(primary_key=True)
     comment_text: Mapped[str] = mapped_column(Text, nullable=False)
     author_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
@@ -108,5 +96,4 @@ class Comment(db.Model):
             "comment_text": self.comment_text,
             "author_id": self.author_id,
             "post_id": self.post_id,
-            "author": self.author.username
         }
