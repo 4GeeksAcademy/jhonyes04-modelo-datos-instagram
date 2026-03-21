@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import String, ForeignKey, Enum, Text
+from sqlalchemy import String, ForeignKey, Enum, Text, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import List
 import enum
@@ -15,6 +15,8 @@ class User(db.Model):
     lastname: Mapped[str] = mapped_column(String(100), nullable=True)
     email: Mapped[str] = mapped_column(
         String(120), unique=True, nullable=False)
+    password: Mapped[str] = mapped_column(nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
 
     posts: Mapped[List['Post']] = relationship(back_populates="author")
     comments: Mapped[List['Comment']] = relationship(back_populates='author')
